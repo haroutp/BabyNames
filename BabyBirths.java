@@ -10,6 +10,33 @@ import edu.duke.*;
 import org.apache.commons.csv.*;
 
 public class BabyBirths {
+    
+    
+    public void whatIsNameInYear(String name, int year, int newYear, String gender){
+        int rank = getRank(year, name, gender);
+        String newName = getName(newYear, rank, gender);
+        if(gender.equals("F")){
+            System.out.println(name + " born in " + year + " would be " + newName + " if she was born in " + newYear);
+            
+        }else{
+            System.out.println(name + " born in " + year + " would be " + newName + " if he was born in " + newYear);
+        }
+    }
+    
+    public String getName(int year, int rank, String gender){
+        FileResource fr = new FileResource("us_babynames/us_babynames_test/yob" + year +"short.csv");
+        int count = 0;
+        for(CSVRecord rec: fr.getCSVParser(false)){
+            if(rec.get(1).equals(gender)){
+                count += 1;
+                if(count == rank){
+                    return rec.get(0);
+                }
+            }
+        }
+        return "NO NAME";
+    }
+    
     public int getRank(int year, String name, String gender){
         int rank = 0;
         FileResource fr = new FileResource("us_babynames/us_babynames_test/yob" + year +"short.csv");
@@ -71,4 +98,27 @@ public class BabyBirths {
         int year = 2013;
         System.out.println(name + " is ranked at: " + getRank(year, name, gender));
     }
+    
+    public void testGetName(){
+        String gender = "M";
+        int year = 2013;
+        int rank = 4;
+        System.out.println("The name of the person at rank " + rank + " is " + getName(year, rank, gender));
+    }
+    
+    public void testWhatIsNameInYear(){
+        String name = "Isabella";
+        int year = 2012;
+        int newYear = 2013;
+        String gender = "F";
+        whatIsNameInYear(name, year, newYear, gender);
+        
+        name = "harout";
+        year = 2013;
+        newYear = 2014;
+        gender = "M";
+        whatIsNameInYear(name, year, newYear, gender);
+        
+    }
+    
 }
