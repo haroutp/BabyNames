@@ -10,6 +10,23 @@ import edu.duke.*;
 import org.apache.commons.csv.*;
 
 public class BabyBirths {
+    public int getRank(int year, String name, String gender){
+        int rank = 0;
+        FileResource fr = new FileResource("us_babynames/us_babynames_test/yob" + year +"short.csv");
+        for(CSVRecord rec: fr.getCSVParser(false)){
+            if(rec.get(1).equals(gender)){
+                if(rec.get(0).equals(name)){
+                    rank += 1;
+                    return rank;
+                }
+                else {
+                    rank += 1;
+                }
+            }
+        }
+        return -1;
+    }
+    
     public void printNames(){
         FileResource fr = new FileResource();
         for(CSVRecord rec: fr.getCSVParser(false)){
@@ -46,5 +63,12 @@ public class BabyBirths {
     public void testTotalBirths(){
         FileResource fr = new FileResource("us_babynames/us_babynames_test/example-small.csv");
         totalBirths(fr);
+    }
+    
+    public void testGetRank(){
+        String name = "Olivia";
+        String gender = "M";
+        int year = 2013;
+        System.out.println(name + " is ranked at: " + getRank(year, name, gender));
     }
 }
