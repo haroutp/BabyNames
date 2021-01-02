@@ -13,19 +13,20 @@ import java.io.File;
 public class BabyBirths {    
     
     public int getTotalBirthsRankedHigher(int year, String name, String gender){
-        FileResource fr = new FileResource("us_babynames/us_babynames_test/yob" + year + "short.csv");
+        FileResource fr = new FileResource("us_babynames/us_babynames_by_year/yob" + year + ".csv");
         
         int totalRankedHigher = 0;
+        int rank = getRank(year, name,gender);
+        if(rank == -1){
+            return totalRankedHigher;
+        }
         for(CSVRecord rec: fr.getCSVParser(false)){
-            int rank = getRank(year, name,gender);
-            if(rank == -1){
-                return totalRankedHigher;
-            }
-            if(rec.get(0).equals(name)){
-                break;
-            }
+           
             
-            if(rec.get(1).equals(gender) && !rec.get(0).equals(name)){
+            if(rec.get(1).equals(gender)){
+                if(rec.get(0).equals(name)){
+                    break;
+                }
                 totalRankedHigher += Integer.parseInt(rec.get(2));
             }
             
@@ -34,12 +35,8 @@ public class BabyBirths {
     }  
     
     public void testGetTotalBirthsRankedHigher(){
-        System.out.println(getTotalBirthsRankedHigher(2012, "Ethan", "M"));
-        System.out.println(getTotalBirthsRankedHigher(2012, "Sophia", "F"));
-        System.out.println(getTotalBirthsRankedHigher(2012, "Ethan", "F"));
-        System.out.println(getTotalBirthsRankedHigher(2013, "Noah", "M"));
-        System.out.println(getTotalBirthsRankedHigher(2012, "Ava", "M"));
-        System.out.println(getTotalBirthsRankedHigher(2014, "Liam", "M"));
+        System.out.println(getTotalBirthsRankedHigher(1990, "Emily", "F"));
+        System.out.println(getTotalBirthsRankedHigher(1990, "Drew", "M"));
     }
     
     public double getAverageRank(String name, String gender){
@@ -61,10 +58,8 @@ public class BabyBirths {
     }
     
     public void testGetAverageRank(){
-        System.out.println(getAverageRank("Isabella", "F"));
-        System.out.println(getAverageRank("Mason", "M"));
-        System.out.println(getAverageRank("Jacob", "M"));
-        System.out.println(getAverageRank("Mason", "F"));
+        System.out.println(getAverageRank("Susan", "F"));
+        System.out.println(getAverageRank("Robert", "M"));
     }
     
     public int yearOfHighestRank(String name, String gender){
@@ -90,10 +85,7 @@ public class BabyBirths {
     }
     
     public void testYearOfHighestRank(){
-        System.out.println(yearOfHighestRank("Isabella", "F"));
-        System.out.println(yearOfHighestRank("Mason", "M"));
-        System.out.println(yearOfHighestRank("Isabella", "M"));
-        System.out.println(yearOfHighestRank("Mason", "F"));
+        System.out.println(yearOfHighestRank("Mich", "M"));
     }
     
     public void whatIsNameInYear(String name, int year, int newYear, String gender){
@@ -108,7 +100,7 @@ public class BabyBirths {
     }
     
     public String getName(int year, int rank, String gender){
-        FileResource fr = new FileResource("us_babynames/us_babynames_test/yob" + year +"short.csv");
+        FileResource fr = new FileResource("us_babynames/us_babynames_by_year/yob" + year +".csv");
         int count = 0;
         for(CSVRecord rec: fr.getCSVParser(false)){
             if(rec.get(1).equals(gender)){
@@ -123,7 +115,7 @@ public class BabyBirths {
     
     public int getRank(int year, String name, String gender){
         int rank = 0;
-        FileResource fr = new FileResource("us_babynames/us_babynames_test/yob" + year +"short.csv");
+        FileResource fr = new FileResource("us_babynames/us_babynames_by_year/yob" + year +".csv");
         for(CSVRecord rec: fr.getCSVParser(false)){
             if(rec.get(1).equals(gender)){
                 if(rec.get(0).equals(name)){
@@ -155,51 +147,61 @@ public class BabyBirths {
         int totalBirths = 0;
         int totalBoys = 0;
         int totalGirls = 0;
+        int uniqueGirls = 0;
+        int uniqueBoys = 0;
+        int uniqueTotal = 0;
         for(CSVRecord rec: fr.getCSVParser(false)){
             int newBorn = Integer.parseInt(rec.get(2));
             totalBirths += newBorn;
+            uniqueTotal += 1;
             if(rec.get(1).equals("M")){
                 totalBoys += newBorn;
+                uniqueBoys += 1;
             }
             else{
                 totalGirls += newBorn;
+                uniqueGirls += 1;
             }
         }
         
         System.out.println("total births = " + totalBirths);
+        System.out.println("total unique names = " + uniqueTotal);
         System.out.println("total boys = " + totalBoys);
+        System.out.println("total unique boy names = " + uniqueBoys);
         System.out.println("total girls = " + totalGirls);
+        System.out.println("total unique girl names = " + uniqueGirls);
+        
     }
     
     public void testTotalBirths(){
-        FileResource fr = new FileResource("us_babynames/us_babynames_test/example-small.csv");
+        FileResource fr = new FileResource();
         totalBirths(fr);
     }
     
     public void testGetRank(){
-        String name = "Olivia";
+        String name = "Frank";
         String gender = "M";
-        int year = 2013;
+        int year = 1971;
         System.out.println(name + " is ranked at: " + getRank(year, name, gender));
     }
     
     public void testGetName(){
         String gender = "M";
-        int year = 2013;
-        int rank = 4;
+        int year = 1982;
+        int rank = 450;
         System.out.println("The name of the person at rank " + rank + " is " + getName(year, rank, gender));
     }
     
     public void testWhatIsNameInYear(){
-        String name = "Isabella";
-        int year = 2012;
-        int newYear = 2013;
+        String name = "Susan";
+        int year = 1972;
+        int newYear = 2014;
         String gender = "F";
         whatIsNameInYear(name, year, newYear, gender);
         
-        name = "harout";
-        year = 2013;
-        newYear = 2014;
+        name = "Jack";
+        year = 1995;
+        newYear = 1991;
         gender = "M";
         whatIsNameInYear(name, year, newYear, gender);
         
