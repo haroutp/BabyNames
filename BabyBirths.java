@@ -8,9 +8,63 @@
 
 import edu.duke.*;
 import org.apache.commons.csv.*;
+import java.io.File;
 
 public class BabyBirths {
     
+    public double getAverageRank(String name, String gender){
+        double ranks = 0.0;
+        int countFiles = 0;
+        DirectoryResource dr = new DirectoryResource();
+        for(File f: dr.selectedFiles()){
+            String fileName = f.getName();
+            int year = Integer.parseInt(fileName.substring(3, 7));
+            int rank = getRank(year, name, gender);
+            if(rank == -1) continue;
+            ranks += rank;
+            countFiles += 1;
+            
+        }
+        if (ranks == 0) return -1.0;
+        
+        return ranks / countFiles;
+    }
+    
+    public void testGetAverageRank(){
+        System.out.println(getAverageRank("Isabella", "F"));
+        System.out.println(getAverageRank("Mason", "M"));
+        System.out.println(getAverageRank("Jacob", "M"));
+        System.out.println(getAverageRank("Mason", "F"));
+    }
+    
+    public int yearOfHighestRank(String name, String gender){
+        Integer highestRank = null;
+        int yearOfHighestRank = 0;
+        DirectoryResource dr = new DirectoryResource();
+        for(File f: dr.selectedFiles()){
+            String fileName = f.getName();
+            int year = Integer.parseInt(fileName.substring(3, 7));
+            int rank = getRank(year, name, gender);
+            if(rank == -1) continue;
+            if(highestRank == null){
+                highestRank = rank;
+                yearOfHighestRank = year;
+            }
+            
+            if(rank > 0 && rank < highestRank){
+                highestRank = rank;
+                yearOfHighestRank = year;
+            }
+        }
+        return yearOfHighestRank;
+    }
+    
+    public void testYearOfHighestRank(){
+        System.out.println(yearOfHighestRank("Isabella", "F"));
+        System.out.println(yearOfHighestRank("Mason", "M"));
+        System.out.println(yearOfHighestRank("Isabella", "M"));
+        System.out.println(yearOfHighestRank("Mason", "F"));
+    }
     
     public void whatIsNameInYear(String name, int year, int newYear, String gender){
         int rank = getRank(year, name, gender);
