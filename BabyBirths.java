@@ -10,7 +10,37 @@ import edu.duke.*;
 import org.apache.commons.csv.*;
 import java.io.File;
 
-public class BabyBirths {
+public class BabyBirths {    
+    
+    public int getTotalBirthsRankedHigher(int year, String name, String gender){
+        FileResource fr = new FileResource("us_babynames/us_babynames_test/yob" + year + "short.csv");
+        
+        int totalRankedHigher = 0;
+        for(CSVRecord rec: fr.getCSVParser(false)){
+            int rank = getRank(year, name,gender);
+            if(rank == -1){
+                return totalRankedHigher;
+            }
+            if(rec.get(0).equals(name)){
+                break;
+            }
+            
+            if(rec.get(1).equals(gender) && !rec.get(0).equals(name)){
+                totalRankedHigher += Integer.parseInt(rec.get(2));
+            }
+            
+        }
+        return totalRankedHigher;
+    }  
+    
+    public void testGetTotalBirthsRankedHigher(){
+        System.out.println(getTotalBirthsRankedHigher(2012, "Ethan", "M"));
+        System.out.println(getTotalBirthsRankedHigher(2012, "Sophia", "F"));
+        System.out.println(getTotalBirthsRankedHigher(2012, "Ethan", "F"));
+        System.out.println(getTotalBirthsRankedHigher(2013, "Noah", "M"));
+        System.out.println(getTotalBirthsRankedHigher(2012, "Ava", "M"));
+        System.out.println(getTotalBirthsRankedHigher(2014, "Liam", "M"));
+    }
     
     public double getAverageRank(String name, String gender){
         double ranks = 0.0;
